@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <title>To-Do App</title>
   <link rel="icon" href="icons/image_icon.png">
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png" />
+
   <style>
     :root {
       --bg: #1a1a1a;
@@ -170,7 +174,7 @@
 
   <script>
   const API = "https://todo-app-using-go.onrender.com";
-  
+
 async function fetchTodos() {
   try {
     const res = await fetch(API + "/");
