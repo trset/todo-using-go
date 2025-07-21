@@ -17,6 +17,13 @@ func StartServer() {
 		AllowHeaders:     []string{"Origin", "Content-Type"},
 		AllowCredentials: true,
 	}))
+	
+	r.StaticFile("/", "./index.html")
+	r.StaticFile("/manifest.json", "./manifest.json")
+	r.StaticFile("/service-worker.js", "./service-worker.js")
+	r.StaticFile("/icon-192.png", "./icon-192.png")
+	r.StaticFile("/icon-512.png", "./icon-512.png")
+
 
 	// Register routes
 	routes.RegisterRoutes(r)
