@@ -169,92 +169,60 @@
   </div>
 
   <script>
-    const API = "https://your-backend.onrender.com";
+  const API = "https://todo-app-using-go.onrender.com";
+  
+async function fetchTodos() {
+  try {
+    const res = await fetch(API + "/");
+    const data = await res.json();
+    const todos = data.todos || [];
+    const container = document.getElementById("todoList");
+    container.innerHTML = "";
 
+    todos.forEach(todo => {
+      const card = document.createElement("div");
+      card.className = "todo-card neumorphic" + (todo.done ? " done" : "");
 
-    async function fetchTodos() {
-      const res = await fetch(API + "/");
-      const data = await res.json();
-      const todos = data.todos || [];
-      const container = document.getElementById("todoList");
-      container.innerHTML = "";
+      const titleEl = document.createElement("div");
+      titleEl.className = "todo-title";
+      titleEl.textContent = todo.title;
+      titleEl.contentEditable = true;
+      titleEl.onblur = () => updateTitle(todo.id, titleEl.textContent);
 
-      todos.forEach(todo => {
-        const card = document.createElement("div");
-        card.className = "todo-card neumorphic" + (todo.done ? " done" : "");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = todo.done;
+      checkbox.onchange = () => toggleDone(todo.id, !todo.done);
 
-        const titleEl = document.createElement("div");
-        titleEl.className = "todo-title";
-        titleEl.textContent = todo.title;
-        titleEl.contentEditable = true;
-        titleEl.onblur = () => updateTitle(todo.id, titleEl.textContent);
+      const left = document.createElement("div");
+      left.className = "todo-left";
+      left.appendChild(checkbox);
+      left.appendChild(titleEl);
 
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.checked = todo.done;
-        checkbox.onchange = () => toggleDone(todo.id, !todo.done);
+      const delBtn = document.createElement("button");
+      delBtn.className = "delete-btn";
+      delBtn.textContent = "✕";
+      delBtn.onclick = () => deleteTodo(todo.id);
 
-        const left = document.createElement("div");
-        left.className = "todo-left";
-        left.appendChild(checkbox);
-        left.appendChild(titleEl);
+      card.appendChild(left);
+      card.appendChild(delBtn);
+      container.appendChild(card);
+    });
+  } catch (err) {
+    console.error("❌ Failed to fetch todos:", err);
+  }
+}
 
-        const delBtn = document.createElement("button");
-        delBtn.className = "delete-btn";
-        delBtn.textContent = "✕";
-        delBtn.onclick = () => deleteTodo(todo.id);
-
-        card.appendChild(left);
-        card.appendChild(delBtn);
-        container.appendChild(card);
-      });
-    }
-
-    async function addTodo() {
-      const title = document.getElementById("titleInput").value.trim();
-      if (!title) return;
-      await fetch(API + "/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title })
-      });
-      document.getElementById("titleInput").value = "";
-      fetchTodos();
-    }
-
-    async function deleteTodo(id) {
-      await fetch(API + "/" + id, { method: "DELETE" });
-      fetchTodos();
-    }
-
-    async function toggleDone(id, done) {
-      await fetch(API + "/" + id, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ done })
-      });
-      fetchTodos();
-    }
-
-    async function updateTitle(id, title) {
-      if (!title.trim()) return;
-      await fetch(API + "/" + id, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title: title.trim() })
-      });
-      fetchTodos();
-    }
-
-    fetchTodos();
-    if ("serviceWorker" in navigator) {
+// Register service worker (fix path)
+if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker
-      .register("/sw.js")
+      .register("sw.js")  // ← no slash for GitHub Pages
       .then(reg => console.log("✅ Service Worker registered", reg.scope))
       .catch(err => console.error("❌ Service Worker registration failed", err));
   });
 }
+
 
   </script>
 
