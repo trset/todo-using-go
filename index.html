@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>To-Do App</title>
-  <link rel="icon" href="image_icon.png">
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-192.png" />
 
@@ -220,7 +219,7 @@ function addTodo() {
   const input = document.getElementById("titleInput");
   const title = input.value.trim();
   if (!title) return;
-  fetch(API + "/", {
+  fetch(API, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ title })
