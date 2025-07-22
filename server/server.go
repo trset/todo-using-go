@@ -18,17 +18,17 @@ func StartServer() {
 		AllowCredentials: true,
 	}))
 
-	// ✅ Serve static files (HTML/CSS/JS/icons)
-	r.Static("/static", "./static")
+	// ✅ Serve static files (HTML/CSS/JS/icons) from root directory
+	r.Static("/static", "./")
 
 	// ✅ Serve PWA-related files (e.g., manifest, service worker)
 	r.StaticFile("/manifest.json", "./manifest.json")
-	r.StaticFile("/service-worker.js", "./service-worker.js")
+	r.StaticFile("/sw.js", "./sw.js")
 	r.StaticFile("/icon-192.png", "./icon-192.png")
 	r.StaticFile("/icon-512.png", "./icon-512.png")
 
 	// ✅ Serve index.html at root
-	r.StaticFile("/", "./static/index.html")
+	r.StaticFile("/", "./index.html")
 
 	// ✅ Register routes under /api to avoid conflicts with /
 	api := r.Group("/api")

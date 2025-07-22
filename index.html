@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>To-Do App</title>
-  <link rel="icon" href="image_icon.png">
+  <link rel="icon" href="icons/image_icon.png">
   <link rel="manifest" href="manifest.json" />
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png" />
+  <link rel="icon" href="icon-192.png" />
 
   <style>
     :root {
@@ -173,7 +172,7 @@
   </div>
 
   <script>
-  const API = "https://todo-app-using-go.onrender.com";
+  const API ="https://todo-app-using-go.onrender.com";
 
 async function fetchTodos() {
   try {
@@ -215,6 +214,23 @@ async function fetchTodos() {
   } catch (err) {
     console.error("❌ Failed to fetch todos:", err);
   }
+}
+
+function addTodo() {
+  const input = document.getElementById("titleInput");
+  const title = input.value.trim();
+  if (!title) return;
+  fetch(API + "/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title })
+  })
+    .then(res => res.json())
+    .then(() => {
+      input.value = "";
+      fetchTodos();
+    })
+    .catch(err => console.error("❌ Failed to add todo:", err));
 }
 
 // Register service worker (fix path)
