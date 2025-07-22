@@ -31,6 +31,11 @@ func StartServer() {
 	r.StaticFile("/", "./index.html")
 	r.StaticFile("/index.html", "./index.html")
 
+	// ✅ Global OPTIONS handler for CORS preflight
+	r.OPTIONS("/*path", func(c *gin.Context) {
+		c.Status(204)
+	})
+
 	// ✅ Register routes under /api to avoid conflicts with /
 	api := r.Group("/api")
 	routes.RegisterRoutes(api)
