@@ -27,8 +27,9 @@ func StartServer() {
 	r.StaticFile("/icon-192.png", "./icon-192.png")
 	r.StaticFile("/icon-512.png", "./icon-512.png")
 
-	// ✅ Serve index.html at root
+	// ✅ Serve index.html at root and at /index.html
 	r.StaticFile("/", "./index.html")
+	r.StaticFile("/index.html", "./index.html")
 
 	// ✅ Register routes under /api to avoid conflicts with /
 	api := r.Group("/api")
