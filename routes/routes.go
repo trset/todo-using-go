@@ -2,14 +2,12 @@ package routes
 
 import (
 	"todo/handlers"
-
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoutes(r *gin.Engine) {
-	r.POST("/", handlers.AddTodo)
-	r.GET("/", handlers.GetAll)
-	r.GET("/:id", handlers.GetById)
-	r.PUT("/:id", handlers.UpdateTodo)
-	r.DELETE("/:id", handlers.DeleteTodo)
+func RegisterRoutes(rg *gin.RouterGroup) {
+	rg.GET("/", handlers.GetAll)
+	rg.POST("/", handlers.AddTodo)
+	rg.PUT("/:id", handlers.UpdateTodo)
+	rg.DELETE("/:id", handlers.DeleteTodo)
 }
