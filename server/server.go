@@ -1,35 +1,40 @@
 package server
 
 import (
-	"todo/routes" // or "todo-using-go/routes" if that's your actual module path
+	"todo/routes"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 func StartServer() {
 	r := gin.Default()
 
-	// Apply proper CORS middleware
-	r.Use(cors.Default())
+	// ✅ CORS config
+	config := cors.Config{
+		AllowOrigins:     []string{"https://trset.github.io"}, // ✅ your frontend origin
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: false,
+		MaxAge:           12 * time.Hour,
+	}
+	r.Use(cors.New(config))
 
 	// Serve static files
-	r.StaticFile("/", "./frontend/index.html")
-	r.Static("/static", "./frontend")
-
-	r.StaticFile("/manifest.json", "./frontend/manifest.json")
-	r.StaticFile("/sw.js", "./frontend/sw.js")
-	r.StaticFile("/icon-192.png", "./frontend/icon-192.png")
-	r.StaticFile("/icon-512.png", "./frontend/icon-512.png")
-
+	r.Static("/", "./")
+	
 	// API routes
 	api := r.Group("/api")
-	routes.RegisterRoutes(api)
+	{
+		routes.RegisterRoutes(api)
+	}
 
-	// SPA fallback
+	// Fallback route
 	r.NoRoute(func(c *gin.Context) {
-		c.File("./frontend/index.html")
+		c.File("./index.html")
 	})
 
-	r.Run()
+	r.Run() // starts server on :8080
 }
