@@ -1,7 +1,7 @@
 package server
 
 import (
-	"todo/routes" // adjust if your module path is different
+	"todo/routes" // or "todo-using-go/routes" if that's your actual module path
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -10,33 +10,26 @@ import (
 func StartServer() {
 	r := gin.Default()
 
-	// ✅ CORS middleware
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"}, // You can restrict this later in production
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type"},
-		AllowCredentials: true,
-	}))
+	// Apply proper CORS middleware
+	r.Use(cors.Default())
 
-	// Serve static files and index.html
-	r.StaticFile("/", "./index.html")
-	r.StaticFile("/index.html", "./index.html")
-	r.StaticFile("/manifest.json", "./manifest.json")
-	r.StaticFile("/sw.js", "./sw.js")
-	r.StaticFile("/icon-192.png", "./icon-192.png")
-	r.StaticFile("/icon-512.png", "./icon-512.png")
+	// Serve static files
+	r.StaticFile("/", "./frontend/index.html")
+	r.Static("/static", "./frontend")
 
-	// Global OPTIONS handler for CORS preflight
-	r.OPTIONS("/*path", func(c *gin.Context) {
-		c.Status(204)
-	})
+	r.StaticFile("/manifest.json", "./frontend/manifest.json")
+	r.StaticFile("/sw.js", "./frontend/sw.js")
+	r.StaticFile("/icon-192.png", "./frontend/icon-192.png")
+	r.StaticFile("/icon-512.png", "./frontend/icon-512.png")
 
-	// Register API routes
+	// API routes
 	api := r.Group("/api")
 	routes.RegisterRoutes(api)
 
-	// ✅ Start the server
-	if err := r.Run(":8080"); err != nil {
-		panic("Failed to start server: " + err.Error())
-	}
+	// SPA fallback
+	r.NoRoute(func(c *gin.Context) {
+		c.File("./frontend/index.html")
+	})
+
+	r.Run()
 }
