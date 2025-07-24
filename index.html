@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>To-Do App</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Todo App</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-192.png" />
+  <meta name="theme-color" content="#FFD700" />
 
   <style>
     :root {
@@ -233,14 +235,13 @@ function addTodo() {
 }
 
 // Register service worker (fix path)
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
+
+  if ('serviceWorker' in navigator) {
     navigator.serviceWorker
-      .register("sw.js")  // ← no slash for GitHub Pages
-      .then(reg => console.log("✅ Service Worker registered", reg.scope))
-      .catch(err => console.error("❌ Service Worker registration failed", err));
-  });
-}
+      .register('sw.js')
+      .then(reg => console.log("SW registered", reg))
+      .catch(err => console.error("SW registration failed", err));
+  }
 
 
   </script>

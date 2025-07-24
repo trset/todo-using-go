@@ -1,54 +1,42 @@
-const CACHE_NAME = "todo-cache-v1";
+const cacheName = "todo-app-v1";
 const urlsToCache = [
-  "/",
-  "/index.html",
-  "/manifest.json",
-  "/icon-192.png",
-  "/icon-512.png"
+  "./index.html",
+  "./manifest.json",
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
-
-self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
+// Install event
+self.addEventListener("install", (e) => {
+  e.waitUntil(
+    caches.open(cacheName).then((cache) => {
       return cache.addAll(urlsToCache);
     })
   );
-  self.skipWaiting();
+  self.skipWaiting(); // Activate the new service worker immediately
 });
 
-
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.map(key => {
-          if (key !== CACHE_NAME) {
+// Activate event (to clean old caches)
+self.addEventListener("activate", (e) => {
+  e.waitUntil(
+    caches.keys().then((keyList) => {
+      return Promise.all(
+        keyList.map((key) => {
+          if (key !== cacheName) {
             return caches.delete(key);
           }
         })
-      )
-    )
+      );
+    })
   );
-  self.clients.claim();
+  self.clients.claim(); // Take control of all clients immediately
 });
 
-
-self.addEventListener("fetch", event => {
-  const requestUrl = new URL(event.request.url);
-
-
-  if (requestUrl.pathname.startsWith("/api/")) {
-    event.respondWith(
-      fetch(event.request).catch(() => new Response("Offline", { status: 503 }))
-    );
-    return;
-  }
-
-
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      return cached || fetch(event.request);
+// Fetch event
+self.addEventListener("fetch", (e) => {
+  e.respondWith(
+    caches.match(e.request).then((res) => {
+      return res || fetch(e.request);
     })
   );
 });
