@@ -132,10 +132,12 @@
       font-family: inherit;
     }
 
-    .todo-title[contenteditable="true"] {
-      border-bottom: 1px dashed #555;
-      outline: none;
-    }
+    .todo-title {
+    color: #fff; /* or light grey like #ccc */
+    flex: 1;
+    margin: 0 1rem;
+    overflow-wrap: anywhere;
+  }
 
     .delete-btn {
       background: var(--card);
@@ -157,6 +159,8 @@
       box-shadow: inset 2px 2px 6px var(--shadow-dark),
                   inset -2px -2px 6px var(--shadow-light);
     }
+    
+
   </style>
   <!-- ... your style stays the same ... -->
 </head>
@@ -191,36 +195,28 @@
     }
 
     function addTodoToDOM(todo) {
-      const li = document.createElement("li");
-      li.className = "todo-card neumorphic";
+  const item = document.createElement("li");
+  item.className = "todo-item neumorphic";
 
-      const left = document.createElement("div");
-      left.className = "todo-left";
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.checked = todo.done;
 
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.checked = todo.Done;
-      checkbox.addEventListener("change", () => toggleDone(todo.ID, !todo.Done));
+  const span = document.createElement("span");
+  span.className = "todo-title";
+  span.textContent = todo.title; // 👈 ensure title is set correctly
 
-      const title = document.createElement("span");
-      title.textContent = todo.Title;
-      title.className = "todo-title";
-      if (todo.Done) li.classList.add("done");
-      title.contentEditable = true;
-      title.addEventListener("blur", () => updateTitle(todo.ID, title.textContent));
+  const delBtn = document.createElement("button");
+  delBtn.className = "delete-btn";
+  delBtn.textContent = "❌";
 
-      left.appendChild(checkbox);
-      left.appendChild(title);
+  item.appendChild(checkbox);
+  item.appendChild(span);
+  item.appendChild(delBtn);
 
-      const del = document.createElement("button");
-      del.textContent = "✖";
-      del.className = "delete-btn";
-      del.addEventListener("click", () => deleteTodo(todo.ID));
+  list.appendChild(item);
+}
 
-      li.appendChild(left);
-      li.appendChild(del);
-      list.appendChild(li);
-    }
 
     async function addTodo(e) {
       e.preventDefault();
