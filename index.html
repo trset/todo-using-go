@@ -7,264 +7,190 @@
   <link rel="manifest" href="manifest.json" />
   <link rel="icon" href="icon-192.png" sizes="192x192"/>
   <meta name="theme-color" content="#FFD700" />
-
-    <style>
-    :root {
-      --bg: #1a1a1a;
-      --card: #1e1e1e;
-      --text: #e0e0e0;
-      --accent: #ffd700; /* gold */
-      --shadow-light: rgba(255, 255, 255, 0.05);
-      --shadow-dark: rgba(0, 0, 0, 0.6);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
+  <style>
 
     body {
-      margin: 0;
-      font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
-      background-color: var(--bg);
-      background-image: radial-gradient(#2c2c2c 1px, transparent 1px);
-      background-size: 20px 20px;
-      color: var(--text);
-      padding: 2rem;
+      background: #121212;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
     }
 
     h1 {
-      text-align: center;
-      color: var(--accent);
-      margin-bottom: 2rem;
-      font-weight: 600;
-      letter-spacing: 1px;
-      font-family: "Gill Sans", "Gill Sans MT", Calibri, sans-serif;
+      color: #ffd700;
+      margin-bottom: 20px;
     }
 
     .container {
-      max-width: 600px;
-      margin: auto;
-    }
-
-    .neumorphic {
-      background: var(--card);
-      border-radius: 12px;
-      box-shadow:
-        6px 6px 12px var(--shadow-dark),
-        -6px -6px 12px var(--shadow-light);
-      border: none;
-      outline: none;
+      width: 90%;
+      max-width: 500px;
     }
 
     .todo-input {
       display: flex;
       gap: 10px;
-      margin-bottom: 1.5rem;
+      margin-bottom: 20px;
     }
 
-    input[type="text"] {
+    .todo-input input {
       flex: 1;
-      padding: 12px;
+      padding: 10px;
       font-size: 16px;
-      background: var(--card);
-      color: var(--text);
+      border: none;
+      outline: none;
       border-radius: 10px;
-      font-family: inherit;
     }
 
-    input[type="text"]::placeholder {
-      color: #777;
-    }
-
-    button {
-      padding: 12px 16px;
-      font-size: 16px;
-      background: var(--card);
-      color: var(--accent);
+    .todo-input button {
+      padding: 10px 20px;
       font-weight: bold;
+      color: #ffd700;
+      background: none;
+      border: none;
       cursor: pointer;
       border-radius: 10px;
-      transition: 0.2s ease;
-      font-family: inherit;
-    }
-
-    button:hover {
-      box-shadow:
-        inset 4px 4px 8px var(--shadow-dark),
-        inset -4px -4px 8px var(--shadow-light);
     }
 
     .todo-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+      list-style: none;
+      padding: 0;
     }
 
-    .todo-card {
-      padding: 16px;
+    .todo-item {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      gap: 15px;
+      padding: 10px 15px;
+      margin-bottom: 15px;
+      border-radius: 15px;
     }
 
-    .todo-card.done .todo-title {
+    .todo-item span {
+      flex: 1;
+      font-size: 18px;
+      color: white;
+    }
+
+    .todo-item span.done {
       text-decoration: line-through;
-      color: #777;
+      opacity: 0.6;
     }
-
-    .todo-left {
-      flex: 1;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
-
-    input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      accent-color: var(--accent);
-      cursor: pointer;
-    }
-
-    .todo-title {
-      font-size: 16px;
-      flex: 1;
-      font-family: inherit;
-    }
-
-    .todo-title {
-    color: #fff; /* or light grey like #ccc */
-    flex: 1;
-    margin: 0 1rem;
-    overflow-wrap: anywhere;
-  }
 
     .delete-btn {
-      background: var(--card);
-      color: #ff4c4c;
-      font-size: 16px;
-      padding: 8px 10px;
-      border-radius: 50%;
-      cursor: pointer;
+      background: none;
       border: none;
-      box-shadow: 4px 4px 8px var(--shadow-dark),
-                  -4px -4px 8px var(--shadow-light);
-      transition: all 0.2s ease;
-      font-family: inherit;
+      font-size: 20px;
+      cursor: pointer;
+      color: red;
     }
 
-    .delete-btn:hover {
-      background: #ff4c4c;
-      color: #fff;
-      box-shadow: inset 2px 2px 6px var(--shadow-dark),
-                  inset -2px -2px 6px var(--shadow-light);
+    /* Neumorphism */
+    .neumorphic {
+      background: #1c1c1c;
+      box-shadow: 5px 5px 15px #0d0d0d,
+                  -5px -5px 15px #2d2d2d;
+      color: white;
     }
-    
-
   </style>
-  <!-- ... your style stays the same ... -->
 </head>
 <body>
-  
-
   <h1>ToDo App</h1>
   <div class="container">
-
-    <!-- ✅ Wrap in form for proper submit -->
     <form id="todo-form" class="todo-input">
       <input class="neumorphic" id="todo-input" type="text" placeholder="Add a new task...">
       <button class="neumorphic" type="submit">Add</button>
     </form>
-
-    <!-- ✅ ID updated to match JS -->
     <ul id="todo-list" class="todo-list"></ul>
   </div>
 
   <script>
-    const base ="https://todo-using-go.onrender.com/api";
-
-    const list = document.getElementById("todo-list");
-    const form = document.getElementById("todo-form");
-    const input = document.getElementById("todo-input");
+    const API = "https://todo-using-go.onrender.com/api"; 
 
     async function fetchTodos() {
-      const res = await fetch(base + "/");
-      const todos = await res.json();
-      list.innerHTML = "";
-      todos.forEach(addTodoToDOM);
+      try {
+        const res = await fetch(API);
+        const todos = await res.json();
+        todos.forEach(todo => addTodoToDOM(todo));
+      } catch (err) {
+        console.error("Failed to fetch todos:", err);
+      }
+    }
+
+    async function addTodo(task) {
+      try {
+        const res = await fetch(API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ task })
+        });
+        const newTodo = await res.json();
+        addTodoToDOM(newTodo);
+      } catch (err) {
+        console.error("Failed to add todo:", err);
+      }
+    }
+
+    async function deleteTodo(id, element) {
+      try {
+        await fetch(`${API}/${id}`, { method: "DELETE" });
+        element.remove();
+      } catch (err) {
+        console.error("Failed to delete todo:", err);
+      }
+    }
+
+    async function toggleDone(id, done, span) {
+      try {
+        await fetch(`${API}/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ done: !done })
+        });
+        span.classList.toggle("done");
+      } catch (err) {
+        console.error("Failed to update todo:", err);
+      }
     }
 
     function addTodoToDOM(todo) {
-  const item = document.createElement("li");
-  item.className = "todo-item neumorphic";
+      const li = document.createElement("li");
+      li.classList.add("todo-item", "neumorphic");
 
-  const checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.checked = todo.done;
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = todo.done;
 
-  const span = document.createElement("span");
-  span.className = "todo-title";
-  span.textContent = todo.title; // 👈 ensure title is set correctly
+      const span = document.createElement("span");
+      span.textContent = todo.task || "Untitled"; // ✅ use `task` field
+      if (todo.done) span.classList.add("done");
 
-  const delBtn = document.createElement("button");
-  delBtn.className = "delete-btn";
-  delBtn.textContent = "❌";
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "❌";
+      delBtn.classList.add("delete-btn");
 
-  item.appendChild(checkbox);
-  item.appendChild(span);
-  item.appendChild(delBtn);
+      checkbox.addEventListener("change", () => toggleDone(todo.id, todo.done, span));
+      delBtn.addEventListener("click", () => deleteTodo(todo.id, li));
 
-  list.appendChild(item);
-}
+      li.appendChild(checkbox);
+      li.appendChild(span);
+      li.appendChild(delBtn);
+      document.getElementById("todo-list").appendChild(li);
+    }
 
-
-    async function addTodo(e) {
+    document.getElementById("todo-form").addEventListener("submit", (e) => {
       e.preventDefault();
-      const title = input.value.trim();
-      if (!title) return;
+      const input = document.getElementById("todo-input");
+      const task = input.value.trim();
+      if (task) {
+        addTodo(task);
+        input.value = "";
+      }
+    });
 
-      const res = await fetch(base + "/", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title })
-      });
-
-      const newTodo = await res.json();
-      addTodoToDOM(newTodo);
-      input.value = "";
-    }
-
-    async function deleteTodo(id) {
-      await fetch(base + "/" + id, { method: "DELETE" });
-      fetchTodos();
-    }
-
-    async function toggleDone(id, done) {
-      await fetch(base + "/" + id, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ done })
-      });
-      fetchTodos();
-    }
-
-    async function updateTitle(id, title) {
-      await fetch(base + "/" + id, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title })
-      });
-      fetchTodos();
-    }
-
-    form.addEventListener("submit", addTodo);
-    window.addEventListener("load", fetchTodos);
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log("✅ Service Worker registered:", reg.scope))
-        .catch(err => console.error("❌ Service Worker registration failed:", err));
-    }
+    fetchTodos();
   </script>
 </body>
 </html>
