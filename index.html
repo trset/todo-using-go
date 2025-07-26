@@ -2,97 +2,94 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Todo App</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="icon" href="icon-192.png" sizes="192x192"/>
-  <meta name="theme-color" content="#FFD700" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ToDo App</title>
   <style>
-
     body {
-      background: #121212;
-      color: #fff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 30px;
+      background-color: #121212;
+      font-family: sans-serif;
+      color: white;
+      text-align: center;
     }
 
     h1 {
       color: #ffd700;
-      margin-bottom: 20px;
+      font-size: 2.5rem;
+      margin-top: 30px;
     }
 
     .container {
-      width: 90%;
-      max-width: 500px;
+      max-width: 700px;
+      margin: auto;
+      padding: 20px;
     }
 
     .todo-input {
       display: flex;
+      justify-content: center;
       gap: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
 
-    .todo-input input {
+    input[type="text"] {
+      padding: 15px;
       flex: 1;
-      padding: 10px;
+      border: none;
+      border-radius: 15px;
+      background: #1f1f1f;
+      box-shadow: inset 5px 5px 10px #0e0e0e, inset -5px -5px 10px #2a2a2a;
+      color: white;
       font-size: 16px;
-      border: none;
-      outline: none;
-      border-radius: 10px;
     }
 
-    .todo-input button {
-      padding: 10px 20px;
-      font-weight: bold;
+    button.neumorphic {
+      padding: 15px 25px;
+      border: none;
+      border-radius: 15px;
+      background: #1f1f1f;
+      box-shadow: 5px 5px 10px #0e0e0e, -5px -5px 10px #2a2a2a;
       color: #ffd700;
-      background: none;
-      border: none;
+      font-weight: bold;
       cursor: pointer;
-      border-radius: 10px;
     }
 
-    .todo-list {
+    ul.todo-list {
       list-style: none;
       padding: 0;
     }
 
-    .todo-item {
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #1f1f1f;
+      margin: 10px 0;
+      padding: 15px 20px;
+      border-radius: 15px;
+      box-shadow: 5px 5px 10px #0e0e0e, -5px -5px 10px #2a2a2a;
+      font-size: 18px;
+    }
+
+    li .left {
       display: flex;
       align-items: center;
-      gap: 15px;
-      padding: 10px 15px;
-      margin-bottom: 15px;
-      border-radius: 15px;
+      gap: 10px;
     }
 
-    .todo-item span {
-      flex: 1;
-      font-size: 18px;
-      color: white;
+    li input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
     }
 
-    .todo-item span.done {
+    li .delete-btn {
+      font-size: 24px;
+      color: red;
+      cursor: pointer;
+    }
+
+    .done {
       text-decoration: line-through;
       opacity: 0.6;
-    }
-
-    .delete-btn {
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: red;
-    }
-
-    /* Neumorphism */
-    .neumorphic {
-      background: #1c1c1c;
-      box-shadow: 5px 5px 15px #0d0d0d,
-                  -5px -5px 15px #2d2d2d;
-      color: white;
     }
   </style>
 </head>
@@ -100,97 +97,83 @@
   <h1>ToDo App</h1>
   <div class="container">
     <form id="todo-form" class="todo-input">
-      <input class="neumorphic" id="todo-input" type="text" placeholder="Add a new task...">
+      <input type="text" id="taskInput" placeholder="Add a new task..." />
       <button class="neumorphic" type="submit">Add</button>
     </form>
     <ul id="todo-list" class="todo-list"></ul>
   </div>
 
   <script>
-    const API = "https://todo-using-go.onrender.com/api"; 
+    const API = "https://your-backend-url.com"; // change this to your actual backend API
+    const form = document.getElementById("todo-form");
+    const input = document.getElementById("taskInput");
+    const list = document.getElementById("todo-list");
 
-    async function fetchTodos() {
-      try {
-        const res = await fetch(API);
-        const todos = await res.json();
-        todos.forEach(todo => addTodoToDOM(todo));
-      } catch (err) {
-        console.error("Failed to fetch todos:", err);
-      }
-    }
-
-    async function addTodo(task) {
-      try {
-        const res = await fetch(API, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ task })
-        });
-        const newTodo = await res.json();
-        addTodoToDOM(newTodo);
-      } catch (err) {
-        console.error("Failed to add todo:", err);
-      }
-    }
-
-    async function deleteTodo(id, element) {
-      try {
-        await fetch(`${API}/${id}`, { method: "DELETE" });
-        element.remove();
-      } catch (err) {
-        console.error("Failed to delete todo:", err);
-      }
-    }
-
-    async function toggleDone(id, done, span) {
-      try {
-        await fetch(`${API}/${id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ done: !done })
-        });
-        span.classList.toggle("done");
-      } catch (err) {
-        console.error("Failed to update todo:", err);
-      }
-    }
-
-    function addTodoToDOM(todo) {
-      const li = document.createElement("li");
-      li.classList.add("todo-item", "neumorphic");
-
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.checked = todo.done;
-
-      const span = document.createElement("span");
-      span.textContent = todo.task || "Untitled"; // ✅ use `task` field
-      if (todo.done) span.classList.add("done");
-
-      const delBtn = document.createElement("button");
-      delBtn.textContent = "❌";
-      delBtn.classList.add("delete-btn");
-
-      checkbox.addEventListener("change", () => toggleDone(todo.id, todo.done, span));
-      delBtn.addEventListener("click", () => deleteTodo(todo.id, li));
-
-      li.appendChild(checkbox);
-      li.appendChild(span);
-      li.appendChild(delBtn);
-      document.getElementById("todo-list").appendChild(li);
-    }
-
-    document.getElementById("todo-form").addEventListener("submit", (e) => {
+    form.addEventListener("submit", function (e) {
       e.preventDefault();
-      const input = document.getElementById("todo-input");
-      const task = input.value.trim();
-      if (task) {
-        addTodo(task);
-        input.value = "";
-      }
+
+      const title = input.value.trim();
+      if (title === "") return;
+
+      fetch(API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: title })
+      })
+        .then(() => {
+          input.value = "";
+          getTodos();
+        });
     });
 
-    fetchTodos();
+    function getTodos() {
+      fetch(API)
+        .then((res) => res.json())
+        .then((data) => {
+          list.innerHTML = "";
+          data.forEach((todo) => {
+            const li = document.createElement("li");
+
+            const left = document.createElement("div");
+            left.classList.add("left");
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = todo.done;
+            checkbox.addEventListener("change", () => toggleDone(todo.id));
+
+            const span = document.createElement("span");
+            span.textContent = todo.title;
+            if (todo.done) span.classList.add("done");
+
+            left.appendChild(checkbox);
+            left.appendChild(span);
+
+            const deleteBtn = document.createElement("span");
+            deleteBtn.textContent = "❌";
+            deleteBtn.className = "delete-btn";
+            deleteBtn.onclick = () => deleteTodo(todo.id);
+
+            li.appendChild(left);
+            li.appendChild(deleteBtn);
+            list.appendChild(li);
+          });
+        });
+    }
+
+    function toggleDone(id) {
+      fetch(`${API}/${id}`, {
+        method: "PATCH"
+      }).then(getTodos);
+    }
+
+    function deleteTodo(id) {
+      fetch(`${API}/${id}`, {
+        method: "DELETE"
+      }).then(getTodos);
+    }
+
+    getTodos(); // initial fetch
   </script>
 </body>
 </html>
